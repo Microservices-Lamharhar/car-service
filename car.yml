@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-deployment
+  labels:
+    app: car 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car
+  template:
+    metadata:
+      labels:
+        app: car
+    spec:
+      containers:
+      - name: car
+        image: car:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8081
+        env:
+        - name: bookingService
+          value: booking-service
+        - name: paymentService
+          value: payment-service
+        - name: userService
+          value: user-service
+        - name: notificationService
+          value: notification-service
+        - name: DB_URL
+          valueFrom:
+              configMapKeyRef:
+                name: postgres-config
+                key: postgres-url
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key : USER_NAME
+        - name: DB_PWD 
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key : PASSWORD
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: car-service
+spec:
+  selector:
+    app: car 
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081 
