@@ -1,4 +1,4 @@
-package com.microservices.car;
+package com.microservices.car.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
